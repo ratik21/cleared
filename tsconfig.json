@@ -22,7 +22,8 @@
       "@/*": ["./src/*"]
     },
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "types": ["bun", "node"]
   },
   "include": [
     "next-env.d.ts",
