@@ -204,16 +204,16 @@ All three integrations were checked against their docs or the live chain on 2026
 - **Endpoint.** `https://router-api.0g.ai/v1`, OpenAI-compatible. Auth is `Authorization: Bearer <key>`, server-side only ([quickstart](https://docs.0g.ai/developer-hub/building-on-0g/compute-network/router/quickstart)).
 - **Private mode.** Every request sends `X-0G-Provider-Trust-Mode: private`. That routes only to TeeML providers (Intel TDX with TEE GPUs, zero retention). If none is available the router returns 503 `no_provider_for_trust_mode` and never falls back silently ([privacy](https://docs.0g.ai/developer-hub/building-on-0g/compute-network/router/privacy)).
 - **Proof.** Every response has `x_0g_trace` with `request_id`, `provider` and `billing`. Sending `verify_tee: true` (on multipart, `?verify_tee=true`) adds `tee_verified`. The `ZG-Res-Key` response header is stored too, for independent checking with the SDK's `processResponse` ([verifiable execution](https://docs.0g.ai/developer-hub/building-on-0g/compute-network/router/features/verifiable-execution)).
-- **Models.** `whisper-large-v3` for voice ([audio](https://docs.0g.ai/developer-hub/building-on-0g/compute-network/router/features/audio)). `glm-5.3` for drafting, reminders and reply reading. `0gm-1.0-35b-a3b` is the backup chat model and also reads images. Qwen vision and omni are excluded because they are TeeTLS, not private.
+- **Models.** `whisper-large-v3` for voice ([audio](https://docs.0g.ai/developer-hub/building-on-0g/compute-network/router/features/audio)). `0gm-1.0-35b-a3b` for drafting, reminders and reply reading. It also reads images. `0gm-1.0-35b-a3b-sia` is the backup. These are the only private (TeeML) chat models, per the live model list on 2026-11-05. `0gm-1.0-35b-a3b`, Qwen vision and omni are TeeTLS, so they're excluded.
 - **Output parsing.** `response_format: { type: 'json_object' }`, then a zod schema. On a schema failure there's one repair retry, then `bad_output`. The model never computes totals. It returns quantities and unit prices, and code sums them.
 
 | Function | 0G call | Input | Output |
 | --- | --- | --- | --- |
-| `draftFromVoice` | `POST /audio/transcriptions?verify_tee=true` (multipart, `model=whisper-large-v3`), then `POST /chat/completions` (`glm-5.3`) | Voice note (webm/opus), saved clients, today's date | Client, line items (description, qty, unit price), due in days, note |
+| `draftFromVoice` | `POST /audio/transcriptions?verify_tee=true` (multipart, `model=whisper-large-v3`), then `POST /chat/completions` (`0gm-1.0-35b-a3b`) | Voice note (webm/opus), saved clients, today's date | Client, line items (description, qty, unit price), due in days, note |
 | `planToday` | One `POST /chat/completions` per day, cached in `collection_plans` | Each overdue or due-soon invoice with its tier, days late, language and notes | One reminder draft (subject, body) per invoice |
 | `readReply` | `POST /chat/completions` | Pasted reply, invoice summary, today's date | `ReplyIntent`, with relative dates like "Friday" resolved to an ISO date |
 
-**When private Whisper is down.** The voice screen says "Private transcription is unavailable right now, type your invoice instead." The typed text goes through the same private `glm-5.3` call, so the request ID requirement still holds. Nothing is faked.
+**When private Whisper is down.** The voice screen says "Private transcription is unavailable right now, type your invoice instead." The typed text goes through the same private `0gm-1.0-35b-a3b` call, so the request ID requirement still holds. Nothing is faked.
 
 **iAI sign-in bonus.** The 0G Privy app ID arrives at the event and only works on `localhost:3000`. With `AUTH_MODE=privy`, the header shows the user's 0G credit balance and it drops after each AI call. How the router bills a signed-in user's credits gets confirmed at the 0G sponsor booth in hour 0. Until then the app shows credits used, summed from `ai_calls.billing_json`.
 
@@ -386,7 +386,7 @@ One repo, one Next.js process, one SQLite file and one contract. There's no queu
 
 | Layer | Choice | Why |
 | --- | --- | --- |
-| Tooling | Bun for installs, scripts and `bun test`. The Next.js server runs on Node | `better-sqlite3` crashed under Bun 1.3.11 and worked under Node 24 when tested on 2026-11-05 |
+| Tooling | Bun 1.4.4 for installs, scripts and `bun test` | `better-sqlite3` crashed under Bun 1.3.11, but works under 1.4.4 and Node 24 (tested 2026-11-05) |
 | App and API | Next.js 16 App Router, TypeScript strict, route handlers as thin adapters | One deploy. Runs on `localhost:3000`, which the 0G iAI sign-in allows |
 | Data | SQLite with `better-sqlite3` and `drizzle-orm`, WAL mode | No infrastructure. One writer fits the relayer |
 | Relayer | A loop started from `src/instrumentation.ts`, guarded by a `globalThis` singleton | No second service. SQLite rows are its queue |
@@ -478,7 +478,6 @@ bun run dev     # http://localhost:3000
 - **Bugs.** Only programmer errors throw. One `withRoute` wrapper parses input with zod, maps each error kind to an HTTP status and a safe message, and logs the rest.
 - **UI errors.** `error.tsx` and `global-error.tsx` catch render failures. Each screen shows the specific state from the plan, such as "Payments resume shortly".
 - **Logging.** `pino` writes JSON logs with `*_PRIVATE_KEY`, `ZG_API_KEY`, signatures and pay tokens redacted.
-- **Scripts that open SQLite.** These run with `node`, because `better-sqlite3` crashes under Bun.
 
 **CI** (`.github/workflows/ci.yml`, on every push and pull request):
 
@@ -572,7 +571,7 @@ Every risk has a check scheduled in the first 3 hours and a fallback decided now
 | Risk | Check (when) | Fallback if it fails |
 | --- | --- | --- |
 | TetherTokenV2 on 1874 doesn't accept `receiveWithAuthorization` from the contract, or the `(v, r, s)` overload is missing | Forge fork test (hours 0–2) | The client signs `transferWithAuthorization` straight to the payee with the same committed nonce. The relayer submits it to the token. `ClearedSettlement` becomes `recordSettlement(invoiceId, payer, payee, value, nonce)`, which checks `authorizationState(payer, nonce)` on chain and writes `settlements`. Still a deployed, verified contract the dashboard reads |
-| Private Whisper has 1 provider and returns 503 | `spike-transcribe.ts` (hours 0–2), and again before recording | Typed invoice path through private `glm-5.3`, labeled "typed". Pre-recorded voice take for the video |
+| Private Whisper has 1 provider and returns 503 | `spike-transcribe.ts` (hours 0–2), and again before recording | Typed invoice path through private `0gm-1.0-35b-a3b`, labeled "typed". Pre-recorded voice take for the video |
 | `x_0g_trace` missing on transcription | Same spike | The transcript receipt records `teeVerified: 'not_reported'` and `/proof` shows that honestly. The drafting call still carries a request ID |
 | viem `http()` rejects `fetchFn` | `spike-anon.ts` (hours 0–2) | `custom({ request })` that posts the JSON-RPC body through `worker.fetch`. About 1 hour |
 | Tor bootstrap is slow on venue Wi-Fi, or RPCs reject Tor exits | Same spike, on venue Wi-Fi | Try the second RPC through Tor. Open the dashboard 60 seconds early for the demo. If both RPCs reject Tor, ask the EF mentors at their booth for their recommended gateway |
@@ -608,11 +607,13 @@ Every risk has a check scheduled in the first 3 hours and a fallback decided now
 
 These are the details an implementer needs that the sections above don't spell out. Hour 0 was Thu 9:00pm IST. If the team is smaller than 3, follow "With fewer people" in the build schedule.
 
-**Tools the build agent may use.** The `browser-harness` skill is allowed for any browser task: the Whitechain faucet, the 0G console, the ETHGlobal dashboard, explorer checks and testing the app's screens. It works in the user's logged-in Chrome. Stop and ask the user at any consent screen, password or MFA prompt. Never print or paste secrets. Keys stay in `.env`, which git ignores.
+**Tools the build agent may use.** The `browser-harness` skill is allowed for any browser task: the Whitechain faucet, the 0G console, the ETHGlobal dashboard, explorer checks and testing the app's screens. It works in the user's logged-in Chrome. Use `BU_NAME=cleared` on every command, because other sessions share the default connection and can take over its tab. Stop and ask the user at any consent screen, password or MFA prompt. Never print or paste secrets. Keys stay in `.env`, which git ignores.
 
 **Commit rule.** ETHGlobal requires frequent commits and rejects small commits with large changes. Commit each working unit and push at every gate. The video can't exceed 4 minutes and can't be sped up.
 
 **Finalist requirements** (from the ETHGlobal project form, read 2026-11-05). A project needs all of these or it leaves the judging queue: a live deployment anyone can open (not a video, repo or slides), a demo video uploaded to ETHGlobal that runs 2 to 4 minutes at 720p or higher with audio and no music, a fully completed submission form, and a public GitHub repo. Don't use background music in the video.
+
+**0G balance.** The account has a $0.00 balance, and `/audio/transcriptions` returned `pay_no_balance`. Ask the 0G booth for the team credits the prize page promises. Don't deposit money without asking the user.
 
 **Faucet.** The Whitechain faucet gives 2 WBT per claim, with about 24 hours between claims per GitHub account.
 
@@ -698,4 +699,4 @@ const { url } = await res.json();
 | `/proof` | Every 0G request ID with provider and TEE status |
 | `/i/[token]` | Client pay page |
 
-**Demo seed.** `scripts/seed-demo.ts` creates Lucia, three clients (Acme, Globex, Initech) and four invoices: one paid, two overdue by 3 and 9 days, one promised. It also stores yesterday's plan, so `/today` has history. The script opens SQLite, so run it with `node`.
+**Demo seed.** `scripts/seed-demo.ts` creates Lucia, three clients (Acme, Globex, Initech) and four invoices: one paid, two overdue by 3 and 9 days, one promised. It also stores yesterday's plan, so `/today` has history.
