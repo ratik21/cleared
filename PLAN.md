@@ -612,6 +612,10 @@ These are the details an implementer needs that the sections above don't spell o
 
 **Commit rule.** ETHGlobal requires frequent commits and rejects small commits with large changes. Commit each working unit and push at every gate. The video can't exceed 4 minutes and can't be sped up.
 
+**Finalist requirements** (from the ETHGlobal project form, read 2026-11-05). A project needs all of these or it leaves the judging queue: a live deployment anyone can open (not a video, repo or slides), a demo video uploaded to ETHGlobal that runs 2 to 4 minutes at 720p or higher with audio and no music, a fully completed submission form, and a public GitHub repo. Don't use background music in the video.
+
+**Faucet.** The Whitechain faucet gives 2 WBT per claim, with about 24 hours between claims per GitHub account.
+
 **API routes.** Every handler parses input with zod and goes through `withRoute`.
 
 | Route | Auth | Input | Output |
