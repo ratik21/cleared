@@ -632,6 +632,10 @@ Discuss any stack change with the user first.
 
 **0G balance.** The account has a $0.00 balance, and `/audio/transcriptions` returned `pay_no_balance`. Ask the 0G booth for the team credits the prize page promises. Don't deposit money without asking the user.
 
+**0G model choice.** On 2026-11-05, [0G's status page](https://pc.0g.ai/status) showed `0GM-1.0-35B-A3B` in outage, and requests to it failed at provider `compute-network-20` in both private and standard mode. `0gm-1.0-35b-a3b-sia` and `whisper-large-v3` weren't flagged and reached the balance check. Keep the model name in config, so the app can use either. Check the status page before any deposit.
+
+**0G testnet.** Testnet has private (TeeML) `glm-5.3` and `qwen/qwen3.8-omni-flash` providers, but the SDK requires a 3 0G deposit and the faucets gave only 0.6 in total. Testnet wallet details are in `.env` as `ZG_TESTNET_*`. Testing there needs about 3.4 more test 0G from 0G's team. It's a separate wallet-based route, so it can't replace Private Computer for the track until 0G confirms it counts.
+
 **Faucet.** The Whitechain faucet gives 2 WBT per claim, with about 24 hours between claims per GitHub account.
 
 **API routes.** Every handler parses input with zod and goes through `withRoute`.
