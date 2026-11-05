@@ -1,47 +1,58 @@
-# Paid: build plan for ETHGlobal Mumbai
+# Cleared: build plan for ETHGlobal Mumbai
 
 Nov 5, 2026
 
 ## Summary
 
-Build Paid, an app that gets Indian freelancers paid by foreign clients in USDT, with a private AI that writes invoices and chases clients who haven't paid. It enters three ETHGlobal Mumbai sponsor tracks where competition was lowest at comparable past events.
+Build Cleared, an app that stops contractors chasing late payments. It writes an invoice from a voice note, collects USDT from a payment link, and has a private AI follow up with clients who haven't paid. It enters three ETHGlobal Mumbai sponsor tracks where competition was lowest at comparable past events.
 
-| Sponsor track | Prize (1st / 2nd / 3rd) | What Paid uses it for | Past entries per prize spot |
+| Sponsor track | Prize (1st / 2nd / 3rd) | What Cleared uses it for | Past entries per prize spot |
 | --- | --- | --- | --- |
 | [0G: Build with 0G Private Computer](https://ethglobal.com/events/mumbai/prizes#0g) | $2,500 / $1,500 / $1,000 | Voice transcription, invoice drafting and the collections agent, all run in a TEE enclave | about 5 (New Delhi 2025) |
-| [EF: Best Use of Anon-RPC](https://ethglobal.com/events/mumbai/prizes#ethereum-foundation) | $2,500 / $1,500 / $1,000 | Every chain read in the app goes through Tor, so no RPC provider can tie the freelancer's wallet to their IP | about 4 (New Delhi 2025) |
-| [Whitechain: Payments Nobody Notices](https://ethglobal.com/events/mumbai/prizes#whitechain) | $2,000 / $1,000 | Client pays a USDT invoice from a link. They sign once, and Paid's relayer pays the gas | no past entries (first ETHGlobal event) |
+| [EF: Best Use of Anon-RPC](https://ethglobal.com/events/mumbai/prizes#ethereum-foundation) | $2,500 / $1,500 / $1,000 | Every chain read the app makes goes through Tor | about 4 (New Delhi 2025) |
+| [Whitechain: Operate, Stablecoin Payments for Business](https://ethglobal.com/events/mumbai/prizes#whitechain) | $2,500 / $1,500 / $1,000 | Payment links, invoices and reminders, a drop-in Pay button, and an accountant export | no past entries (first ETHGlobal event) |
 
-**The user.** An Indian freelancer (designer, developer, writer) billing clients abroad. Today they wait days for international transfers, lose money on fees and FX, and chase late payers by hand.
+**The user.** A contractor anywhere in the world who already gets paid in stablecoins, such as a designer in Buenos Aires working for web3 startups. The problem Cleared solves is late payment. Chasing clients is slow and awkward, and it's the one pain the research confirmed.
 
-**The one-line pitch.** "Say what you did, Paid sends the invoice, collects the USDT in a minute, and chases anyone who's late, without any AI company seeing your client list."
+**The client.** A crypto-native company that already holds USDT. The client pays from their own wallet.
 
-**Best case from sponsors.** About $7,000 if all three tracks place first, plus the [finalist prize](https://ethglobal.com/events/mumbai/prizes#finalist-prizes) of $1,000 per person and $500 per person in travel money for a team of 3 to 5.
+**The one-line pitch.** "Stop chasing late payments. Say what you did, Cleared sends the invoice, collects the USDT, and follows up with anyone who's late."
+
+**What the privacy features are for.** Private AI and Tor reads earn the 0G and EF tracks. They aren't a demand the research found, so they support the pitch and don't lead it.
+
+**Best case from sponsors.** About $7,500 if all three tracks place first. The [finalist prize](https://ethglobal.com/events/mumbai/prizes#finalist-prizes) is separate. It pays $250 for a solo hacker with no travel money, $250 per person plus $250 travel for 2 people, and $1,000 per person plus $500 travel for 3 to 5 people.
 
 ## End-user flows
 
-There are two people in every demo. Priya is the freelancer in Pune. Acme's finance lead in Berlin is the client. Acme is a crypto startup that already pays contractors in USDT.
+There are two people in every demo. Lucia is a freelance designer in Buenos Aires. Acme is a web3 startup that pays its contractors in USDT, and its finance lead is the client.
 
-**Priya creates an invoice (about 30 seconds).**
+**Lucia creates an invoice (about 30 seconds).**
 
-1. Priya signs in. With the 0G iAI sign-in, her daily 0G credits show in the header.
+1. Lucia signs in. With the 0G iAI sign-in, her daily 0G credits show in the header.
 2. She taps the mic and says: "Invoice Acme, three logo drafts, six hundred dollars, due in seven days."
-3. Paid transcribes the note and drafts the invoice privately: client, line items, amount in USDT, due date. A badge shows "Private AI, TEE verified" with the 0G request ID.
-4. She edits a field if needed and taps Send. Paid emails Acme a payment link.
+3. Cleared transcribes the note and drafts the invoice privately: client, line items, amount in USDT, due date. A badge shows "Private AI, TEE verified" with the 0G request ID.
+4. She edits a field if needed and taps Send. Cleared gives her a payment link to send to Acme.
 
-**The client pays (about 15 seconds).**
+**The client pays (about 20 seconds).**
 
-1. The client opens the link. They see the invoice, the amount and one button, "Pay 600 USDT".
-2. They tap it. A hidden wallet in the browser signs one authorization. There's no wallet popup, no gas and no chain picker.
-3. Paid's relayer submits the payment and pays the gas. The page shows "Paid" with an explorer link within a few seconds.
+1. The client opens the link. They see the invoice, the amount and a "Pay 600 USDT" button.
+2. They connect their wallet and sign once. The signature costs them no gas.
+3. Cleared's relayer submits the payment and pays the gas. The page shows "Paid" with an explorer link within a few seconds.
 
-**Priya's next morning (the reason to return).**
+**A business adds Cleared to its own site (the drop-in).**
 
-1. Priya opens Paid and sees "Who owes you": 1 paid today, 2 overdue, total outstanding.
-2. For each overdue invoice, the collections agent has drafted a reminder. The tone gets firmer the later the invoice is: a friendly nudge at 1 day, a firm note at 7 days, a final notice at 14 days.
+1. A developer creates a payment link with one API call, or adds the Cleared Pay button script to a page.
+2. Their customer pays through the same pay page.
+3. The developer reads the payment status from the API. The whole integration is about 20 lines.
+
+**Lucia's next morning (the reason to return).**
+
+1. Lucia opens Cleared and sees "Who owes you": 1 paid today, 2 overdue, total outstanding.
+2. For each overdue invoice, the collections agent has drafted a reminder. The tone gets firmer the later the invoice is: a friendly nudge under 7 days, a firm note from 7 days, a final notice from 14 days.
 3. She pastes a client's reply ("we'll pay Friday"). The agent reads it, marks the invoice "promised Fri", and pauses reminders until then.
 4. She approves each reminder before it goes out. Nothing is sent without her tap.
-5. Her dashboard totals come from the chain, read through Tor. A small "Private reads" indicator shows the share of reads that went through Anon-RPC.
+5. At month end she downloads a CSV for her accountant, with each invoice, fee, net amount and explorer link.
+6. Her dashboard totals come from the chain, read through Tor. A small "Private reads" indicator shows the share of reads that went through Anon-RPC.
 
 ## Track requirements matrix
 
@@ -58,26 +69,28 @@ Each sponsor rule below has a feature that meets it, a demo moment that shows it
 | EF | RPC reads go through Anon-RPC by default | One chain client for the browser, built on the Anon-RPC worker's `fetch`. No other read path exists | "Private reads 100%" indicator | `apps/web/lib/chain.ts` |
 | EF | Share of traffic, disclosed exceptions | The Sepolia bootstrap read and relayer writes are disclosed in the README | Indicator plus one README line | `README.md` "Anon-RPC coverage" |
 | EF | Works end to end, good UX, could ship | Loading state while Tor connects, a fallback RPC that still goes through Tor | Dashboard loads with a "Connecting privately" state | Demo video |
-| Whitechain | Payer takes zero visible crypto steps, pays no gas | Hidden browser wallet signs EIP-3009. Relayer submits and pays gas | 1:10 client pays with one tap | Explorer tx shows the relayer as sender |
-| Whitechain | Explain who pays gas, how the relayer gets WBT, what stops draining | Relayer rules (section 7) | Closing slide | `README.md` "Relayer security" |
-| Whitechain | Contract deployed and verified on chain 1874 | `PaidSettlement.sol` | Explorer link on screen | `README.md` contract address |
+| Whitechain | Everything a business needs to get paid in USDT | Invoices, payment links, due dates and reminders | 0:55 client pays, 2:20 reminder | Demo video |
+| Whitechain | Drop-in piece a separate demo app adds in about 20 lines | Payment link API and `pay.js` button, used by `examples/shop/` | 1:30 the demo shop with the Pay button | `examples/shop/` |
+| Whitechain | Show the merchant and the paying customer | Lucia's dashboard and the client pay page | Both on screen | Demo video |
+| Whitechain | Extra credit: go past the first payment | Accountant CSV export with fee, net amount and explorer link | 2:35 CSV download | `/api/invoices/export` |
+| Whitechain | Contract deployed and verified on chain 1874 | `ClearedSettlement.sol` | Explorer link on screen | `README.md` contract address |
 | Whitechain | At least 1 payment in official USDT `0xcedf…55a7` in the main flow | Every invoice settles in that token only | Explorer tx | `README.md` explorer link |
-| Whitechain | README line on why onchain stablecoin settlement | "A foreign client pays in a minute with no SWIFT wire or card fees, and the payment itself is the receipt." | Closing slide | `README.md` |
-| Whitechain | Steady commits, README setup, architecture, limitations, 2–4 minute video showing each party, feedback file | Commit at every gate in section 9 | Video shows Priya and the client | `WHITECHAIN_FEEDBACK.md` |
+| Whitechain | README line on why onchain stablecoin settlement | "A contractor abroad gets dollars in minutes without a bank in the middle, and the payment itself is a receipt anyone can verify." | Closing slide | `README.md` |
+| Whitechain | Steady commits, README setup, architecture, limitations, 2–4 minute video showing each party, feedback file | Commit at every gate in section 9 | Video shows Lucia and the client | `WHITECHAIN_FEEDBACK.md` |
 
 The 0G video limit is under 3 minutes and Whitechain's is 2 to 4 minutes, so one video of 2:50 meets both.
 
 ## Architecture
 
-Paid is one server process, one SQLite file and one contract. Browsers read the chain only through Tor. The server writes to the chain only through the relayer, and the relayer can only call `settle()`.
+Cleared is one server process, one SQLite file and one contract. Browsers read the chain only through Tor. The server writes to the chain only through the relayer, and the relayer can only call `settle()`.
 
 ```mermaid
 flowchart LR
   subgraph Browsers
     FB["Freelancer browser<br/>voice note, Today, Proof<br/>Anon-RPC reader + meter"]
-    CB["Client browser<br/>pay page, one tap<br/>hidden wallet signs once"]
+    CB["Client browser<br/>pay page, one tap<br/>own wallet signs once"]
   end
-  subgraph Server["Paid server: one Next.js process"]
+  subgraph Server["Cleared server: one Next.js process"]
     INV["invoices + collections"]
     AI["0G client<br/>private mode, request IDs"]
     REL["relayer loop<br/>guard, simulate, write-ahead<br/>only holder of the key"]
@@ -86,7 +99,7 @@ flowchart LR
   ZG["0G Router<br/>TDX enclave, zero retention"]
   TOR["Tor gateway<br/>Anon-RPC worker"]
   subgraph WC["Whitechain Sepolia (1874)"]
-    PS["PaidSettlement<br/>no owner"]
+    PS["ClearedSettlement<br/>no owner"]
     USDT["USDT 0xcedf…55a7"]
   end
   FB -->|API| INV
@@ -108,7 +121,7 @@ flowchart LR
 - **Server to 0G.** The 0G key never leaves the server. Every response is parsed into `Traced<T>` before any other code reads it. Each `ai_calls` row also stores its `invoice_id`, so the invoice page shows its own request IDs. A response without `x_0g_trace.request_id` counts as a failure.
 - **Server to chain.** Only `src/server/relayer/` holds `RELAYER_PRIVATE_KEY`, and it only encodes `settle()`. Its traffic is the one disclosed exception to Anon-RPC.
 - **Browser to chain.** Only `src/client/chain-reader.ts` can create a chain client in the browser, and it always goes through the Anon-RPC worker.
-- **Chain.** `PaidSettlement` has no owner. The client's signature binds the invoice, payee and amount, so nothing on the server can redirect money.
+- **Chain.** `ClearedSettlement` has no owner. The client's signature binds the invoice, payee and amount, so nothing on the server can redirect money.
 
 **Data flow for one invoice.** Voice note, then `POST /api/invoices/voice`, then 0G transcription and drafting, then an `invoices` row (`draft`). Send freezes the terms (`open`) and creates the `PayToken` link. The client signs, then `POST /api/pay/[token]`, then a `payment_attempts` row. The relayer loop simulates and broadcasts `settle()`, the tx confirms, and the attempt becomes `confirmed`. The freelancer's browser reads `settlements(id)` over Tor and shows "verified privately on-chain".
 
@@ -172,7 +185,7 @@ The tone tier and the escalation timing are code. The AI only writes the words f
 | Table | Key columns | Owner (only writer) |
 | --- | --- | --- |
 | `users` | `id`, `privy_id`, `payee_address`, `display_name` | auth |
-| `clients` | `id`, `owner_id`, `name`, `email`, `whatsapp`, `lang` (`en` or `hinglish`) | invoices |
+| `clients` | `id`, `owner_id`, `name`, `email`, `whatsapp`, `lang` (`en` or `es`) | invoices |
 | `invoices` | `id` (bytes32), `owner_id`, `kind`, `token` (stored as the sha256 of the link secret, unique), `client_id`, `items_json`, `payee`, `amount_atoms`, `due_at`, `transcript`, `sent_at` | invoices |
 | `payment_attempts` | `id`, `invoice_id`, `state`, `payer`, `value_atoms`, `valid_after`, `valid_before`, `nonce`, `signature`, `raw_tx`, `tx_hash`, `tx_nonce`, `tries`, `failure` | relayer |
 | `ai_calls` | `request_id`, `user_id`, `kind`, `model`, `provider`, `tee_verified`, `zg_res_key`, `billing_json`, `ok`, `latency_ms` | ai |
@@ -220,14 +233,14 @@ const client = createPublicClient({ chain: whitechainSepolia,
 
 - **RPC choice.** Whitechain's docs say their own endpoints are the only official public RPCs for chain 1874, so `rpc.testnet.whitechain.io` is primary. Ankr's `rpc.ankr.com/whitechain_testnet` answered during research and is the second entry in viem's `fallback()`. Both go through the worker.
 - **What goes through it.** Every read the browser makes: the freelancer dashboard, the "verified privately on-chain" badge, and the client's confirmation poll. Reads are batched into one Multicall3 `aggregate3` call per screen. The pay button needs no chain read, so Tor never slows down paying.
-- **Disclosed exceptions** (README "Anon-RPC coverage"). The one bootstrap read that resolves the Tor specifier on mainnet. The relayer's own server traffic (simulate, broadcast, receipts), which is Paid's IP and reveals no user.
+- **Disclosed exceptions** (README "Anon-RPC coverage"). The one bootstrap read that resolves the Tor specifier on mainnet. The relayer's own server traffic (simulate, broadcast, receipts), which is Cleared's IP and reveals no user. The client's wallet extension, which uses its own RPC outside the app.
 - **Boot and failure.** The worker starts on first page load. While it connects, the dashboard shows database data labeled "verifying privately". If Tor fails, the state turns `degraded` with an explicit "Read directly (not private)" button. The meter counts any direct read. There's no silent fallback.
 
 ### Whitechain USDT payments (`src/chain/eip3009.ts`)
 
 - **Token.** Official USDT `0xcedfB56113143d55b2358b8CFbB0dEB5Ad2f55a7` is a proxy to TetherTokenV2, verified on the explorer. It supports `transferWithAuthorization`, `receiveWithAuthorization`, `cancelAuthorization`, `authorizationState` and `permit` (selectors read from bytecode).
 - **Signing domain.** `{ name: 'Tether USD', version: '1', chainId: 1874, verifyingContract: 0xcedf…55a7 }`, hardcoded because `eip712Domain()` reverts. It was confirmed by matching the on-chain `DOMAIN_SEPARATOR`.
-- **What the client signs.** One EIP-712 `ReceiveWithAuthorization` with `to` set to Paid's settlement contract, `value` set to the invoice amount, `validBefore` set to now plus 1 hour, and `nonce` set to `settleNonce(...)` (section 7). It's signed in the browser by a key in `localStorage`, so there's no popup and no gas.
+- **What the client signs.** One EIP-712 `ReceiveWithAuthorization` with `to` set to Cleared's settlement contract, `value` set to the invoice amount, `validBefore` set to now plus 1 hour, and `nonce` set to `settleNonce(...)` (section 7). The client signs it in their own wallet through `window.ethereum`, and it costs them no gas. The pay page asks the wallet to add chain 1874 first with `wallet_addEthereumChain`.
 - **Proof it works.** A relayer-paid EIP-3009 transfer already succeeded on this token: tx `0x23c28fd3557b1125f705c4499218327b9d894e715ac4d8e4ba8bdb7eee29d376`, 84,429 gas.
 - **Network.** RPC `https://rpc.testnet.whitechain.io`, explorer `https://explorer.testnet.whitechain.io` (Blockscout). The EVM version is Prague.
 
@@ -235,7 +248,7 @@ const client = createPublicClient({ chain: whitechainSepolia,
 
 The relayer can delay a payment or pay its gas, and nothing else. It can't redirect money, replay a payment or settle an invoice twice. The client's one signature commits to the invoice, the freelancer and the amount, and the settlement contract has no owner.
 
-### `contracts/src/PaidSettlement.sol`
+### `contracts/src/ClearedSettlement.sol`
 
 This is a flat single file with no imports, no owner, no proxy and no admin function. Build settings are solc `0.8.24`, `evm_version = prague`, optimizer 200 runs and `bytecode_hash = none`, so the explorer's recompile matches.
 
@@ -249,7 +262,7 @@ interface IUSDT3009 {
     function authorizationState(address authorizer, bytes32 nonce) external view returns (bool);
 }
 
-contract PaidSettlement {
+contract ClearedSettlement {
     IUSDT3009 public immutable USDT;                 // 0xcedfB56113143d55b2358b8CFbB0dEB5Ad2f55a7
     address   public immutable TREASURY;             // receives fees; fees buy WBT for the relayer
     uint256   public constant FEE_BPS = 50;          // 0.5%
@@ -269,7 +282,7 @@ contract PaidSettlement {
 
     /// The EIP-3009 nonce the payer signs. Binds version, chain, this contract, invoice, payee, amount.
     function nonceFor(bytes32 invoiceId, address payee, uint256 value) public view returns (bytes32) {
-        return keccak256(abi.encode(bytes32("PAID_SETTLE_V1"), block.chainid, address(this),
+        return keccak256(abi.encode(bytes32("CLEARED_SETTLE_V1"), block.chainid, address(this),
                                     invoiceId, payee, value));
     }
 
@@ -312,7 +325,7 @@ forge script script/Deploy.s.sol --rpc-url https://rpc.testnet.whitechain.io/ --
 
 The verifier URL must end in `/api/`, or the request fails ([Whitechain Foundry guide](https://docs.whitechain.io/build/deploy/deploy-with-foundry.md)). Constructor args are the USDT address and the treasury address. The deployed address goes into `deployments/1874.json`, which the app imports.
 
-**Contract tests** (`contracts/test/PaidSettlement.t.sol`, a fork of chain 1874 against the real USDT):
+**Contract tests** (`contracts/test/ClearedSettlement.t.sol`, a fork of chain 1874 against the real USDT):
 
 1. A signed authorization settles. The payee gets value minus fee, the treasury gets the fee, and `InvoiceSettled` is emitted.
 2. A second `settle` for the same invoice reverts with `AlreadySettled`.
@@ -338,7 +351,7 @@ Each payment request goes through these checks in order, cheapest first. Anythin
 
 | Attack | What stops it |
 | --- | --- |
-| Junk or reverting calls | Paid only builds `settle()` itself, from a database invoice, after a successful simulation. A reverting call is never broadcast |
+| Junk or reverting calls | Cleared only builds `settle()` itself, from a database invoice, after a successful simulation. A reverting call is never broadcast |
 | Many valid tiny payments | Minimum invoice of 5 USDT. Every settlement pays a 0.5% fee (capped at 2 USDT) that covers its own gas |
 | One attacker, many invoices | Invoices need a signed-in freelancer. Per-payer and per-invoice limits |
 | Stolen relayer key | The contract gives the relayer no special rights. The key can only spend the hot wallet, which holds at most 1 WBT |
@@ -387,14 +400,16 @@ One repo, one Next.js process, one SQLite file and one contract. There's no queu
 | Hosting | Railway, one service with a volume for SQLite | Long-lived process. Vercel can't run the relayer loop |
 
 ```
-paid/
+cleared/
   README.md  WHITECHAIN_FEEDBACK.md  .env.example  deployments/1874.json
-  contracts/                 foundry.toml, src/PaidSettlement.sol, test/PaidSettlement.t.sol, script/Deploy.s.sol
+  contracts/                 foundry.toml, src/ClearedSettlement.sol, test/ClearedSettlement.t.sol, script/Deploy.s.sol
+  examples/shop/             separate demo site that adds the Pay button in about 20 lines
+  public/pay.js              drop-in Pay button script
   vectors/nonce.json         golden nonce cases, checked by forge test and bun test
   scripts/
     gen-abi.ts               forge out/ -> src/chain/abi.generated.ts (never hand-written)
-    fund-client.ts           sends demo USDT to the client browser's hidden-wallet address
-    seed-demo.ts             Priya, 3 clients, 4 invoices (1 paid, 2 overdue, 1 promised), yesterday's plan
+    fund-client.ts           sends demo USDT to the demo client wallet
+    seed-demo.ts             Lucia, 3 clients, 4 invoices (1 paid, 2 overdue, 1 promised), yesterday's plan
     settle-once.ts           one real settlement from the command line (first Whitechain proof)
     refill.ts                treasury USDT -> WBT -> relayer (documented, manual at the hackathon)
     spike-*.ts               the hour-0 checks in section 9
@@ -409,12 +424,14 @@ paid/
       collections.ts         planToday, approveSend, readReply, applyProposal
       ai/zerog.ts ai/prompts.ts ai/ledger.ts
       relayer/loop.ts relayer/guard.ts relayer/rpc.ts
-    client/                  chain-reader.ts (Anon-RPC + meter), hidden-wallet.ts, voice.ts, api.ts
+    client/                  chain-reader.ts (Anon-RPC + meter), wallet.ts (connect and sign), voice.ts, api.ts
     app/
       (app)/today/page.tsx   "Who owes you", reminder drafts, reply reader
       (app)/invoices/        list, new (voice), [id] review and send
       (app)/proof/page.tsx   every 0G request ID with provider and TEE status
       i/[token]/page.tsx     client pay page
+      api/v1/links/route.ts  public payment link API (create, read status), Bearer key
+      api/invoices/export/route.ts  accountant CSV
       api/**/route.ts        one file per operation: parse, call server/*, serialize
     instrumentation.ts       starts the relayer loop once
 ```
@@ -475,7 +492,7 @@ Hacking runs 36 hours, from Thu Nov 5 at 9:00pm IST to Sat Nov 7 at 9:00am IST (
 
 ```mermaid
 gantt
-  title Paid build plan, IST
+  title Cleared build plan, IST
   dateFormat YYYY-MM-DD HH:mm
   axisFormat %a %H:%M
   section Before hacking
@@ -502,16 +519,16 @@ gantt
 | --- | --- | --- | --- | --- |
 | Before hacking (if missed, do it first in H0) | Fresh relayer key. Each teammate claims 0.5 WBT from the faucet on a phone hotspot. Swap some WBT to USDT on YetiTrade | Repo, Railway project, Next.js scaffold plan | Workshops are over. In hour 0, ask the 0G, EF and Whitechain booths the three questions in section 11 | Relayer and client wallets hold WBT and USDT |
 | H0–3 (Thu 9:00pm–Fri 12:00am) | Forge fork test: `receiveWithAuthorization` through a test contract against the real USDT | Next.js app, Drizzle schema, migrations, session (demo persona) | `spike-transcribe.ts` (private Whisper with `request_id`), `spike-anon.ts` (`eth_blockNumber` on 1874 through Tor) | **G1.** Fork test passes, or the fallback in section 11 is chosen. A 0G request ID is printed. One read through Tor returns `0x752` |
-| H3–8 (Fri 12:00–5:00am) | `PaidSettlement.sol` and tests, deploy and verify, `settle-once.ts` | Domain types, `deriveState`, nonce vector in `bun test` | `zerog.ts` with receipt capture, `ai_calls` ledger, prompt for invoice drafting | **G2.** Contract verified on the explorer. One real USDT settlement tx. Explorer link in the README (commit) |
-| H8–16 (Fri 5:00am–1:00pm) | Pay intake, relayer loop, guard, write-ahead, crash-matrix tests | Voice record screen, review and send, pay page with hidden wallet | `draftFromVoice`, typed fallback, `TraceBadge` | **G3.** Voice note to sent invoice to client tap to paid, with an explorer link |
-| H16–24 (Fri 1:00–9:00pm) | Reconcile pass, gas ledger, budgets, WBT floor | Today view, reminder approval with `wa.me`/`mailto`, `/proof` page | `planToday`, `readReply`, chain reader with meter and "verified privately" badge | **G4.** The whole demo script runs on localhost, with the meter showing 100% private user reads |
-| H24–30 (Fri 9:00pm–Sat 3:00am) | Railway deploy with volume, `fund-client.ts`, `seed-demo.ts` | 0G Privy sign-in on `localhost:3000`, credit counter, failure states | Hinglish prompt check, degraded Tor state, 503 handling | **G5.** Hosted link works. Three clean demo runs in a row |
+| H3–8 (Fri 12:00–5:00am) | `ClearedSettlement.sol` and tests, deploy and verify, `settle-once.ts` | Domain types, `deriveState`, nonce vector in `bun test` | `zerog.ts` with receipt capture, `ai_calls` ledger, prompt for invoice drafting | **G2.** Contract verified on the explorer. One real USDT settlement tx. Explorer link in the README (commit) |
+| H8–16 (Fri 5:00am–1:00pm) | Pay intake, relayer loop, guard, write-ahead, crash-matrix tests | Voice record screen, review and send, pay page with wallet connect | `draftFromVoice`, typed fallback, `TraceBadge` | **G3.** Voice note to sent invoice to client tap to paid, with an explorer link |
+| H16–24 (Fri 1:00–9:00pm) | Reconcile pass, gas ledger, budgets, WBT floor | Today view, reminder approval with `wa.me`/`mailto`, `/proof` page | `planToday`, `readReply`, payment link API, `pay.js`, `examples/shop/`, CSV export, chain reader with meter and "verified privately" badge | **G4.** The whole demo script runs on localhost, with the meter showing 100% private user reads |
+| H24–30 (Fri 9:00pm–Sat 3:00am) | Railway deploy with volume, `fund-client.ts`, `seed-demo.ts` | 0G Privy sign-in on `localhost:3000`, credit counter, failure states | Spanish prompt check, degraded Tor state, 503 handling | **G5.** Hosted link works. Three clean demo runs in a row |
 | H30–34 (Sat 3:00–7:00am) | `WHITECHAIN_FEEDBACK.md`, README relayer section | Record the 2:50 video | README 0G and Anon-RPC sections, architecture diagram | Every item on the submission checklist ticked |
 | H34–35.5 (Sat 7:00–8:30am) | Submit on ETHGlobal with the 3 sponsor picks | Check the live link from a phone | Check the video plays and the repo is public | Submitted by 8:30am, 30 minutes before the deadline |
 
 **Sleep.** Take it in shifts. A sleeps 6:00–10:00am Fri. C sleeps 10:00am–2:00pm Fri. B sleeps 3:00–7:00am Sat, after the video is recorded.
 
-**With fewer people.** For 2 people, A also takes Anon-RPC, and the reply reader is cut first. Solo, keep the pay flow, voice to invoice, the reminder drafts and the Anon-RPC dashboard. Cut the reply reader, the iAI sign-in and the hosted deploy (submit with localhost plus the video). Never cut the real settlement, the request IDs or the Tor reads, because each one is a track requirement.
+**With fewer people.** For 2 people, A also takes Anon-RPC, and the reply reader is cut first. Solo, keep the pay flow, voice to invoice, reminder drafts, the Anon-RPC dashboard, the drop-in Pay button and the hosted deploy. Cut the reply reader, the iAI sign-in and the CSV export. Never cut the real settlement, the request IDs, the Tor reads, the drop-in or the live link, because each one is a track requirement.
 
 ## Demo script and submission checklist
 
@@ -519,27 +536,27 @@ One 2:50 video covers all three tracks. 0G wants under 3 minutes and Whitechain 
 
 | Time | On screen | Line spoken | Track evidence |
 | --- | --- | --- | --- |
-| 0:00–0:15 | Priya's "Who owes you" view, seeded | "Priya designs logos in Pune. Her clients are abroad, and getting paid takes days and a lot of chasing." | Reason to return |
-| 0:15–0:55 | Mic, voice note, draft appears, "Private AI, TEE verified, req 7f3a…" badge, credit counter drops | "She says what she did. Paid writes the invoice inside a secure enclave. No AI company sees her client or her rates." | 0G request ID, iAI credits |
-| 0:55–1:30 | Client window on the pay link, one tap, "Paid", explorer link | "Her client in Berlin taps Pay. No wallet, no gas, no chain. Paid's relayer paid the gas." | Whitechain zero crypto steps, official USDT tx |
-| 1:30–1:50 | Explorer page for the tx: sender is the relayer, USDT moved to Priya | "One signature, settled on Whitechain in seconds." | Verified contract, explorer link |
-| 1:50–2:20 | Back to Priya: invoice flips to paid with "verified privately on-chain", meter "31 private, 0 direct" | "Every read her dashboard makes goes through Tor, so no RPC provider can tie her wallet to her location." | Anon-RPC by default, share of traffic |
-| 2:20–2:40 | Overdue invoice, Hinglish firm reminder, paste "Friday ko bhej dunga", "Promised Fri", Approve | "Every morning the agent chases late payers for her. She approves each message." | AI is the product |
-| 2:40–2:50 | One slide: what breaks without 0G, the drain table, why stablecoins | "Without 0G, her client list goes to an AI company. Without stablecoins, she waits days." | Required explanations |
+| 0:00–0:15 | Lucia's "Who owes you" view, seeded | "Lucia is a designer paid in dollars by startups abroad. Her work is done. Chasing the money takes her hours." | Reason to return |
+| 0:15–0:55 | Mic, voice note, draft appears, "Private AI, TEE verified, req 7f3a…" badge, credit counter drops | "She says what she did. Cleared writes the invoice inside a secure enclave." | 0G request ID, iAI credits |
+| 0:55–1:30 | Client on the pay link, connects wallet, signs once, "Paid", explorer link | "Her client pays USDT from their own wallet with one signature. Cleared pays the gas." | Whitechain merchant and customer, official USDT tx |
+| 1:30–1:50 | `examples/shop/` with the Pay button and its 20 lines of code | "Any business can add this to its site in about 20 lines." | Whitechain drop-in |
+| 1:50–2:20 | Back to Lucia: invoice flips to paid with "verified privately on-chain", meter "31 private, 0 direct" | "Her dashboard reads the chain through Tor by default." | Anon-RPC by default, share of traffic |
+| 2:20–2:40 | Overdue invoice, firm reminder, paste "We'll pay Friday", "Promised Fri", Approve, CSV download | "Every morning the agent follows up for her. She approves each message, and her accountant gets a clean export." | AI is the product, past the first payment |
+| 2:40–2:50 | One slide: what breaks without 0G, why stablecoins | "Without the AI there's no invoice and no follow-up. Without stablecoins, she doesn't get dollars this easily." | Required explanations |
 
-**Demo-day rules.** Open the dashboard tab 60 seconds early so Tor is already connected. Use the seeded client wallet funded by `scripts/fund-client.ts`. Keep a pre-recorded take of the voice beat in case the one private Whisper provider is down. If it is, say so in the video and use the typed path.
+**Demo-day rules.** Open the dashboard tab 60 seconds early so Tor is already connected. Import the demo client wallet into a browser wallet, funded by `scripts/fund-client.ts`. Keep a pre-recorded take of the voice beat in case the one private Whisper provider is down. If it is, say so in the video and use the typed path.
 
 **Submission checklist.**
 
 - [ ] Public GitHub repo, with steady commits through the event (Whitechain checks history)
 - [ ] `README.md`: one-line pitch, setup, architecture diagram, limitations
 - [ ] `README.md` "What breaks without 0G" sentence
-- [ ] `README.md` "Why onchain stablecoin settlement" line: "A foreign client pays in a minute with no SWIFT wire or card fees, and the payment itself is the receipt."
+- [ ] `README.md` "Why onchain stablecoin settlement" line: "A contractor abroad gets dollars in minutes without a bank in the middle, and the payment itself is a receipt anyone can verify."
 - [ ] `README.md` "Anon-RPC coverage": user reads 100% through Anon-RPC, plus the two disclosed exceptions
 - [ ] `README.md` "Relayer security": the drain table and how the relayer gets WBT
 - [ ] `README.md` contract address with explorer link (verified), plus the explorer link of a USDT settlement
 - [ ] `WHITECHAIN_FEEDBACK.md`: what worked, where we got stuck, what the docs lacked
-- [ ] Demo video, 2:50, showing Priya and the client
+- [ ] Demo video, 2:50, showing Lucia and the client
 - [ ] Live demo link (Railway, `AUTH_MODE=demo`) plus a note that the 0G sign-in runs on localhost
 - [ ] Team contacts (Telegram and X) for 0G
 - [ ] ETHGlobal sponsor picks: 0G, Ethereum Foundation, Whitechain (3 of 3)
@@ -551,7 +568,7 @@ Every risk has a check scheduled in the first 3 hours and a fallback decided now
 
 | Risk | Check (when) | Fallback if it fails |
 | --- | --- | --- |
-| TetherTokenV2 on 1874 doesn't accept `receiveWithAuthorization` from the contract, or the `(v, r, s)` overload is missing | Forge fork test (hours 0–2) | The client signs `transferWithAuthorization` straight to the payee with the same committed nonce. The relayer submits it to the token. `PaidSettlement` becomes `recordSettlement(invoiceId, payer, payee, value, nonce)`, which checks `authorizationState(payer, nonce)` on chain and writes `settlements`. Still a deployed, verified contract the dashboard reads |
+| TetherTokenV2 on 1874 doesn't accept `receiveWithAuthorization` from the contract, or the `(v, r, s)` overload is missing | Forge fork test (hours 0–2) | The client signs `transferWithAuthorization` straight to the payee with the same committed nonce. The relayer submits it to the token. `ClearedSettlement` becomes `recordSettlement(invoiceId, payer, payee, value, nonce)`, which checks `authorizationState(payer, nonce)` on chain and writes `settlements`. Still a deployed, verified contract the dashboard reads |
 | Private Whisper has 1 provider and returns 503 | `spike-transcribe.ts` (hours 0–2), and again before recording | Typed invoice path through private `glm-5.3`, labeled "typed". Pre-recorded voice take for the video |
 | `x_0g_trace` missing on transcription | Same spike | The transcript receipt records `teeVerified: 'not_reported'` and `/proof` shows that honestly. The drafting call still carries a request ID |
 | viem `http()` rejects `fetchFn` | `spike-anon.ts` (hours 0–2) | `custom({ request })` that posts the JSON-RPC body through `worker.fetch`. About 1 hour |
@@ -559,8 +576,9 @@ Every risk has a check scheduled in the first 3 hours and a fallback decided now
 | Faucet blocks claims on the shared venue IP | Claim before hacking starts, from phone hotspots | Each teammate claims from their own GitHub account and hotspot. 0.5 WBT per account covers thousands of settlements at about 100k gas each |
 | No USDT for the demo client | Swap WBT to USDT on YetiTrade (hour 0) | Ask the Whitechain team at their booth for test USDT |
 | iAI credit billing per user is unclear | Ask at the 0G booth (hour 0) | Show "credits used" from `ai_calls.billing_json` against the team key, and say so in the README |
-| Hinglish output quality | Prompt test in hour 10 | Default reminder language to English, with Hinglish as a per-client toggle |
-| Railway volume lost | None needed | Paid status comes back from chain. Drafts and notes are reseeded with `scripts/seed-demo.ts` |
+| Spanish output quality | Prompt test in hour 10 | Default reminder language to English, with Spanish as a per-client toggle |
+| Client wallet won't sign for chain 1874 | Sign a test message with MetaMask and Rabby (hours 0–2) | Add the chain with `wallet_addEthereumChain`. If one wallet refuses, use the other for the demo |
+| Railway volume lost | None needed | Payment status comes back from chain. Drafts and notes are reseeded with `scripts/seed-demo.ts` |
 
 **Decisions made** (2026-11-05):
 
@@ -570,7 +588,10 @@ Every risk has a check scheduled in the first 3 hours and a fallback decided now
 | The EIP-3009 nonce is a hash of invoice, payee, amount, chain and contract | One client signature binds who gets paid and how much. The relayer needs no trust |
 | The contract has no owner and `settle()` is permissionless | No admin key to steal or explain. The drain story fits one slide |
 | 0.5% fee capped at 2 USDT, 5 USDT minimum | Each settlement pays for its own gas, which answers "how does the business pay gas" |
-| Client wallet is a key in `localStorage`, pre-funded for the demo | No embedded-wallet provider or bundler supports chain 1874. EIP-3009 gives one signature and no gas without either |
+| The client pays from their own wallet, signing once with no gas | Real clients already hold USDT in a wallet. A hidden browser wallet would need funding, which is itself a crypto step |
+| Whitechain track is Operate, not Payments Nobody Notices | A client using a wallet doesn't fit "zero visible crypto steps". Operate pays more ($2,500 first prize) and lists invoices and reminders for contractors as a track idea |
+| The user is a global contractor already paid in stablecoins, not specifically in India | Late payment is the confirmed pain. Cross-border fees are mostly solved by Wise and Skydo, and sources say USDT for export work doesn't fit India's FEMA rules |
+| The pitch leads with late payments, not privacy | Research found no freelancer demand for private AI or private reads. They stay as track requirements |
 | The client persona is a crypto startup that already pays in USDT | A real onramp is out of scope. The README lists it as a limitation |
 | All user chain reads run in the browser through Anon-RPC. The relayer's server traffic is direct and disclosed | Hiding the server's own IP protects nobody. Users' reads are what EF scores |
 | Code picks the reminder tone and timing. The AI writes the words | Predictable escalation, and the AI still can't be removed without losing the product |

@@ -1,5 +1,7 @@
 # How the architecture in PLAN.md was chosen
 
+These candidates predate two later changes. The project was renamed from Paid to Cleared, and it moved from the Whitechain "Payments Nobody Notices" track with a hidden client wallet to the Operate track with the client's own wallet. The settlement contract design didn't change. `PLAN.md` is the current version.
+
 Four design candidates were written in parallel from the same brief (`GROUNDING.md`), each on a different model. `PLAN.md` uses candidate 3 as the base, with grafts from the other three.
 
 ## Where all four agreed
