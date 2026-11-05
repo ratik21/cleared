@@ -12,3 +12,7 @@ contracts/broadcast/
 .DS_Store
 HANDOFF.md
 .handoffs/
+next-env.d.ts
+*.tsbuildinfo
+*.pem
+/coverage
