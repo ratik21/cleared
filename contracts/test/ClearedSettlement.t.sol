@@ -2,6 +2,7 @@
 pragma solidity 0.8.38;
 
 import {Test} from "forge-std/Test.sol";
+import {stdJson} from "forge-std/StdJson.sol";
 import {ClearedSettlement, IUSDT3009} from "../src/ClearedSettlement.sol";
 
 interface IERC20 {
@@ -156,5 +157,37 @@ contract ClearedSettlementTest is Test {
     function _assertUnsettled() internal view {
         (,,, uint64 paidAt) = settlement.settlements(INVOICE);
         assertEq(paidAt, 0);
+    }
+}
+
+/// Runs offline. `vectors/nonce.json` was generated with `cast`, independently of both implementations.
+contract NonceVectorTest is Test {
+    using stdJson for string;
+
+    function test_nonceForMatchesGoldenVectors() public {
+        string memory json = vm.readFile("../vectors/nonce.json");
+        address implementation = address(new ClearedSettlement(IUSDT3009(address(0)), address(0)));
+        uint256 checked;
+
+        while (json.keyExists(_path(checked, ""))) {
+            address settlement = json.readAddress(_path(checked, ".settlement"));
+            vm.chainId(vm.parseUint(json.readString(_path(checked, ".chainId"))));
+            vm.etch(settlement, implementation.code);
+
+            bytes32 nonce = ClearedSettlement(settlement)
+                .nonceFor(
+                    json.readBytes32(_path(checked, ".invoiceId")),
+                    json.readAddress(_path(checked, ".payee")),
+                    vm.parseUint(json.readString(_path(checked, ".value")))
+                );
+
+            assertEq(nonce, json.readBytes32(_path(checked, ".nonce")), json.readString(_path(checked, ".label")));
+            checked++;
+        }
+        assertEq(checked, 7);
+    }
+
+    function _path(uint256 index, string memory field) private pure returns (string memory) {
+        return string.concat(".cases[", vm.toString(index), "]", field);
     }
 }

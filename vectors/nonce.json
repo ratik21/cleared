@@ -1,0 +1,67 @@
+{
+  "cases": [
+    {
+      "label": "600 USDT invoice",
+      "chainId": "1874",
+      "settlement": "0x1111111111111111111111111111111111111111",
+      "invoiceId": "0xd4cd9ccbf11f058b18de31988714aa436786df2f02db6971dd220551be9dd440",
+      "payee": "0x7580eD603Ca084d4990650cdEd1990bE8bbd2694",
+      "value": "600000000",
+      "nonce": "0x4c4f45d2d679a2fc04db7ab62f7897feaa0630d8c6447b00e6b8627f028b9776"
+    },
+    {
+      "label": "minimum value",
+      "chainId": "1874",
+      "settlement": "0x1111111111111111111111111111111111111111",
+      "invoiceId": "0xd4cd9ccbf11f058b18de31988714aa436786df2f02db6971dd220551be9dd440",
+      "payee": "0x7580eD603Ca084d4990650cdEd1990bE8bbd2694",
+      "value": "5000000",
+      "nonce": "0x0ec918997ca27fb7924fd342c8732576a9b9670a53efe71538b574cc2553428f"
+    },
+    {
+      "label": "other invoice",
+      "chainId": "1874",
+      "settlement": "0x1111111111111111111111111111111111111111",
+      "invoiceId": "0x865f8320855a5fd1d9b40a35ba790c850c63cedbe79ddfc9ada5638d6a3c44d5",
+      "payee": "0x7580eD603Ca084d4990650cdEd1990bE8bbd2694",
+      "value": "600000000",
+      "nonce": "0x42707cf28dbc92dfdd22c80c2862654f459ce8c85165fd1840ca5096cd1f78ce"
+    },
+    {
+      "label": "other payee",
+      "chainId": "1874",
+      "settlement": "0x1111111111111111111111111111111111111111",
+      "invoiceId": "0xd4cd9ccbf11f058b18de31988714aa436786df2f02db6971dd220551be9dd440",
+      "payee": "0x2222222222222222222222222222222222222222",
+      "value": "600000000",
+      "nonce": "0xfcae0f6ed6d9d12cde3f7918f5758d0846ec993a863585f71247bc405990c3d8"
+    },
+    {
+      "label": "other contract",
+      "chainId": "1874",
+      "settlement": "0x2222222222222222222222222222222222222222",
+      "invoiceId": "0xd4cd9ccbf11f058b18de31988714aa436786df2f02db6971dd220551be9dd440",
+      "payee": "0x7580eD603Ca084d4990650cdEd1990bE8bbd2694",
+      "value": "600000000",
+      "nonce": "0xe556b1d808f19849b7c77f24015074ce8f7acd3c71e470b22bec11451e812922"
+    },
+    {
+      "label": "other chain",
+      "chainId": "1",
+      "settlement": "0x1111111111111111111111111111111111111111",
+      "invoiceId": "0xd4cd9ccbf11f058b18de31988714aa436786df2f02db6971dd220551be9dd440",
+      "payee": "0x7580eD603Ca084d4990650cdEd1990bE8bbd2694",
+      "value": "600000000",
+      "nonce": "0x74dce567c0f692997588bae5b76f38691831a27f7fd64da5d8ab87fbea3cf08e"
+    },
+    {
+      "label": "largest uint128 value",
+      "chainId": "1874",
+      "settlement": "0x1111111111111111111111111111111111111111",
+      "invoiceId": "0xd4cd9ccbf11f058b18de31988714aa436786df2f02db6971dd220551be9dd440",
+      "payee": "0x7580eD603Ca084d4990650cdEd1990bE8bbd2694",
+      "value": "340282366920938463463374607431768211455",
+      "nonce": "0xfb65a805c5e44053c22ac17c92c784ab552dd647b6b8820e08c5dbbe1843aa53"
+    }
+  ]
+}
