@@ -8,6 +8,7 @@
     "check": "ultracite check",
     "dev": "next dev",
     "fix": "ultracite fix",
+    "gen:abi": "bun scripts/gen-abi.ts",
     "start": "next start",
     "test": "bun test src",
     "typecheck": "next typegen && tsc --noEmit"
