@@ -452,7 +452,10 @@ cleared/
 | `EXPLORER_API` | `https://explorer.testnet.whitechain.io/api/` |
 | `USDT_ADDRESS` | `0xcedfB56113143d55b2358b8CFbB0dEB5Ad2f55a7` |
 | `DAILY_GAS_BUDGET_WEI` | 0.2 WBT, in wei |
-| `DATABASE_PATH` | `./data/paid.db` (Railway volume path in production) |
+| `DATABASE_PATH` | `./data/cleared.db` (Railway volume path in production) |
+| `CLEARED_API_KEY` | Bearer key for the public payment link API |
+| `CLIENT_DEMO_PRIVATE_KEY`, `CLIENT_DEMO_ADDRESS` | Demo client wallet, imported into a browser wallet for the demo |
+| `TREASURY_PRIVATE_KEY` | Treasury wallet, used only by `scripts/refill.ts` |
 
 The settlement address isn't an env variable. It comes from `deployments/1874.json`, so there's one source.
 
@@ -600,3 +603,95 @@ Every risk has a check scheduled in the first 3 hours and a fallback decided now
 | Single Next.js process with SQLite on Railway | Fewest moving parts for 36 hours. The relayer needs a long-lived process |
 
 **Out of scope for the hackathon** (listed in the README limitations): fiat onramp for clients without USDT, partial payments, multiple currencies, mainnet deployment and production key custody (KMS).
+
+## Build notes
+
+These are the details an implementer needs that the sections above don't spell out. Hour 0 was Thu 9:00pm IST. If the team is smaller than 3, follow "With fewer people" in the build schedule.
+
+**Tools the build agent may use.** The `browser-harness` skill is allowed for any browser task: the Whitechain faucet, the 0G console, the ETHGlobal dashboard, explorer checks and testing the app's screens. It works in the user's logged-in Chrome. Stop and ask the user at any consent screen, password or MFA prompt. Never print or paste secrets. Keys stay in `.env`, which git ignores.
+
+**Commit rule.** ETHGlobal requires frequent commits and rejects small commits with large changes. Commit each working unit and push at every gate. The video can't exceed 4 minutes and can't be sped up.
+
+**API routes.** Every handler parses input with zod and goes through `withRoute`.
+
+| Route | Auth | Input | Output |
+| --- | --- | --- | --- |
+| `POST /api/invoices/voice` | Session | Multipart audio | `{ invoice, transcript, receipts }` or `{ unavailable: reason }` |
+| `POST /api/invoices/text` | Session | `{ text }` | Same as voice |
+| `PATCH /api/invoices/[id]` | Session | Client, items, due date | Invoice. Refused unless `draft` |
+| `POST /api/invoices/[id]/send` | Session | None | `{ payUrl }`. Freezes the terms |
+| `POST /api/invoices/[id]/void` | Session | None | Invoice. Refused once paid |
+| `GET /api/invoices` | Session | None | Invoices with derived state |
+| `GET /api/invoices/export` | Session | `from`, `to` | CSV |
+| `GET /api/today` | Session | None | Daily plan, cached per user and date |
+| `POST /api/reminders/[id]/approve` | Session | `{ channel: 'whatsapp' \| 'email' }` | `{ deepLink }` |
+| `POST /api/replies/read` | Session | `{ invoiceId, text }` | `{ proposalId, intent, receipt }` |
+| `POST /api/replies/[proposalId]/apply` | Session | None | Collection note |
+| `GET /api/proof` | Session | None | All `ai_calls` receipts |
+| `GET /api/pay/[token]` | Token | None | Public invoice view, with `invoiceId`, `payee`, `amount`, `settlement` |
+| `POST /api/pay/[token]` | Token | `{ payer, validAfter, validBefore, signature }` | `{ attemptId, state }`. Idempotent |
+| `GET /api/pay/[token]/status` | Token | None | `{ state, txHash, explorerUrl }` |
+| `POST /api/v1/links` | Bearer | `{ clientName, description, amountUsd, dueInDays }` | `{ id, url }` |
+| `GET /api/v1/links/[id]` | Bearer | None | `{ id, state, txHash }` |
+
+**Chain definition** (`src/chain/whitechain.ts`):
+
+```ts
+export const whitechainSepolia = defineChain({
+  id: 1874, name: 'Whitechain Sepolia',
+  nativeCurrency: { name: 'WBT', symbol: 'WBT', decimals: 18 },
+  rpcUrls: { default: { http: ['https://rpc.testnet.whitechain.io/'] } },
+  blockExplorers: { default: { name: 'Blockscout', url: 'https://explorer.testnet.whitechain.io' } },
+});
+```
+
+**Client payment** (`src/client/wallet.ts`). USDT has 6 decimals, confirmed by `decimals()` on chain.
+
+```ts
+const wallet = createWalletClient({ chain: whitechainSepolia, transport: custom(window.ethereum) });
+const [payer] = await wallet.requestAddresses();
+await wallet.addChain({ chain: whitechainSepolia });
+await wallet.switchChain({ id: 1874 });
+const signature = await wallet.signTypedData({
+  account: payer, domain: USDT_DOMAIN, primaryType: 'ReceiveWithAuthorization',
+  types: { ReceiveWithAuthorization: [
+    { name: 'from', type: 'address' }, { name: 'to', type: 'address' },
+    { name: 'value', type: 'uint256' }, { name: 'validAfter', type: 'uint256' },
+    { name: 'validBefore', type: 'uint256' }, { name: 'nonce', type: 'bytes32' } ] },
+  message: { from: payer, to: SETTLEMENT, value, validAfter: 0n, validBefore, nonce },
+});
+```
+
+If the wallet holds too little USDT, the pay page says so and shows the amount needed. It never submits.
+
+**Drop-in Pay button.** A merchant's server creates the link, and the page shows the button. `public/pay.js` turns any element with `data-cleared-link` into a Pay button that opens the pay page. `examples/shop/` is a separate small site that shows this.
+
+```ts
+const res = await fetch(`${CLEARED_URL}/api/v1/links`, {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${CLEARED_API_KEY}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ clientName: 'Globex', description: 'Logo pack', amountUsd: '49.00', dueInDays: 7 }),
+});
+const { url } = await res.json();
+```
+
+```html
+<script src="https://YOUR_CLEARED_HOST/pay.js"></script>
+<button data-cleared-link="PAYMENT_LINK_URL">Pay 49 USDT</button>
+```
+
+**CSV export columns.** `invoice_id`, `client`, `description`, `issued_on`, `due_on`, `paid_on`, `gross_usdt`, `fee_usdt`, `net_usdt`, `payer`, `tx_hash`, `explorer_url`.
+
+**Screens.**
+
+| Path | Purpose |
+| --- | --- |
+| `/` | Landing page with the pitch and sign-in |
+| `/today` | "Who owes you", reminder approvals, reply reader, private reads meter |
+| `/invoices` | List with derived state, and the CSV download |
+| `/invoices/new` | Voice recorder, with the typed fallback |
+| `/invoices/[id]` | Review, edit, send, and the 0G receipt badge |
+| `/proof` | Every 0G request ID with provider and TEE status |
+| `/i/[token]` | Client pay page |
+
+**Demo seed.** `scripts/seed-demo.ts` creates Lucia, three clients (Acme, Globex, Initech) and four invoices: one paid, two overdue by 3 and 9 days, one promised. It also stores yesterday's plan, so `/today` has history. The script opens SQLite, so run it with `node`.

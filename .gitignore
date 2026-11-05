@@ -10,3 +10,5 @@ contracts/out/
 contracts/cache/
 contracts/broadcast/
 .DS_Store
+HANDOFF.md
+.handoffs/
