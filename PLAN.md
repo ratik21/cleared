@@ -632,7 +632,9 @@ Discuss any stack change with the user first.
 
 **0G balance.** The account has a $0.00 balance, and `/audio/transcriptions` returned `pay_no_balance`. Ask the 0G booth for the team credits the prize page promises. Don't deposit money without asking the user.
 
-**0G model choice.** On 2026-11-05, [0G's status page](https://pc.0g.ai/status) showed `0GM-1.0-35B-A3B` in outage, and requests to it failed at provider `compute-network-20` in both private and standard mode. `0gm-1.0-35b-a3b-sia` and `whisper-large-v3` weren't flagged and reached the balance check. Keep the model name in config, so the app can use either. Check the status page before any deposit.
+**0G model choice.** On 2026-11-05, [0G's status page](https://pc.0g.ai/status) showed `0GM-1.0-35B-A3B` in outage, and requests to it failed at provider `compute-network-20` in both private and standard mode. `0gm-1.0-35b-a3b-sia` and `whisper-large-v3` weren't flagged and reached the balance check. Keep the model name in config, so the app can switch. Check the status page before any deposit.
+
+The track doesn't require 0GM or private mode. It requires inference on 0G Private Computer with request IDs, and the prize page calls privacy "on demand". So any model served through 0G can work. Order of choice: `0gm-1.0-35b-a3b-sia` (private), then `glm-5.3`, then a Claude, GPT or Gemini model through 0G, all marked operational on 2026-11-05. Only TeeML models are truly private, so say "private" in the UI only for those. The current API key is locked to private mode, so non-private models need a second Standard key. A `pay_no_balance` reply doesn't prove a provider works: models in outage return it too. Ask 0G to confirm third-party models count.
 
 **0G testnet.** Testnet has private (TeeML) `glm-5.3` and `qwen/qwen3.8-omni-flash` providers, but the SDK requires a 3 0G deposit and the faucets gave only 0.6 in total. Testnet wallet details are in `.env` as `ZG_TESTNET_*`. Testing there needs about 3.4 more test 0G from 0G's team. It's a separate wallet-based route, so it can't replace Private Computer for the track until 0G confirms it counts.
 
