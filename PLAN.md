@@ -250,11 +250,11 @@ The relayer can delay a payment or pay its gas, and nothing else. It can't redir
 
 ### `contracts/src/ClearedSettlement.sol`
 
-This is a flat single file with no imports, no owner, no proxy and no admin function. Build settings are solc `0.8.24`, `evm_version = prague`, optimizer 200 runs and `bytecode_hash = none`, so the explorer's recompile matches.
+This is a flat single file with no imports, no owner, no proxy and no admin function. Build settings are solc `0.8.38`, `evm_version = prague`, optimizer 200 runs and `bytecode_hash = none`, so the explorer's recompile matches.
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.38;
 
 interface IUSDT3009 {
     function receiveWithAuthorization(address from, address to, uint256 value, uint256 validAfter,
@@ -608,6 +608,23 @@ Every risk has a check scheduled in the first 3 hours and a fallback decided now
 These are the details an implementer needs that the sections above don't spell out. Hour 0 was Thu 9:00pm IST. If the team is smaller than 3, follow "With fewer people" in the build schedule.
 
 **Tools the build agent may use.** The `browser-harness` skill is allowed for any browser task: the Whitechain faucet, the 0G console, the ETHGlobal dashboard, explorer checks and testing the app's screens. It works in the user's logged-in Chrome. Use `BU_NAME=cleared` on every command, because other sessions share the default connection and can take over its tab. Stop and ask the user at any consent screen, password or MFA prompt. Never print or paste secrets. Keys stay in `.env`, which git ignores.
+
+**Approved stack.** The user approved these versions on 2026-11-05. Use the latest patch at install time.
+
+| Layer | Choice | Version |
+| --- | --- | --- |
+| App | Next.js | 16.4.5 |
+| Language | TypeScript. Fall back to the previous major version if it breaks Next.js | 7.0.2 |
+| Runtime and tests | Bun | 1.4.4 |
+| Lint and format | Biome through Ultracite | 2.6.5 and 8.1.1 |
+| Styling | Tailwind and shadcn/ui | 4.3.4 |
+| Database | SQLite with Drizzle | 0.45.4 |
+| Validation, logging, git hooks | Zod, Pino, Lefthook | 4.6.7, 10.4.0, 2.2.2 |
+| Blockchain | viem, Foundry, Solidity | 2.57.16, 1.9.0, 0.8.38 |
+| CI | GitHub Actions | Free on a public repo |
+| Hosting | Railway Free Trial ($5 credit, 30 days, no card). Fallback is the Free plan | Check a volume is available when setting up |
+
+Discuss any stack change with the user first.
 
 **Commit rule.** ETHGlobal requires frequent commits and rejects small commits with large changes. Commit each working unit and push at every gate. The video can't exceed 4 minutes and can't be sped up.
 
