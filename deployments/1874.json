@@ -1,0 +1,8 @@
+{
+  "chainId": 1874,
+  "settlement": "0xCD4360162A27568737c02B9224133b0d23e1211e",
+  "usdt": "0xcedfB56113143d55b2358b8CFbB0dEB5Ad2f55a7",
+  "treasury": "0xC761C7d982BfC8D2D5DCA644b52f1af0999EE4C4",
+  "deployTx": "0x11b80a8e5a1aaf2c2c92bd6ab883fd8700cbc67dfd90a73d073408859c4ca147",
+  "deployBlock": 12306188
+}
